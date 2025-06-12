@@ -2,6 +2,9 @@ package com.demo.smartchatbotapp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.demo.smartchatbotapp.common.ErrorHandler
+import com.demo.smartchatbotapp.common.Logger
+import com.demo.smartchatbotapp.common.NetworkMonitor
 import com.demo.smartchatbotapp.domain.model.ChatMessage
 import com.demo.smartchatbotapp.domain.usecase.GetChatHistoryUseCase
 import com.demo.smartchatbotapp.domain.usecase.SendMessageUseCase
@@ -9,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatHistoryUseCase: GetChatHistoryUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _chatState = MutableStateFlow<ChatState>(ChatState.Loading)
@@ -40,14 +45,24 @@ class ChatViewModel @Inject constructor(
      * Updates the [chatState] with the results.
      */
     private fun loadChatHistory() {
-        getChatHistoryUseCase()
-            .onEach { messages ->
-                _chatState.value = ChatState.Success(messages)
+        combine(
+            getChatHistoryUseCase(),
+            networkMonitor.isOnline()
+        ) { messages, isOnline ->
+            if (!isOnline) {
+                ChatState.Error(ErrorHandler.handleNetworkError(Exception()))
+            } else {
+                ChatState.Success(messages)
             }
-            .catch { error ->
-                _chatState.value = ChatState.Error(error.message ?: "Unknown error occurred")
-            }
-            .launchIn(viewModelScope)
+        }
+        .catch { error ->
+            Logger.e("Error loading chat history", error)
+            _chatState.value = ChatState.Error(ErrorHandler.handleError(error))
+        }
+        .onEach { state ->
+            _chatState.value = state
+        }
+        .launchIn(viewModelScope)
     }
 
     /**
@@ -61,10 +76,11 @@ class ChatViewModel @Inject constructor(
             _chatState.value = ChatState.Loading
             sendMessageUseCase(content)
                 .onSuccess { message ->
-                    // The chat history will be updated automatically through Flow
+                    Logger.i("Message sent successfully")
                 }
                 .onFailure { error ->
-                    _chatState.value = ChatState.Error(error.message ?: "Failed to send message")
+                    Logger.e("Failed to send message", error)
+                    _chatState.value = ChatState.Error(ErrorHandler.handleError(error))
                 }
         }
     }
