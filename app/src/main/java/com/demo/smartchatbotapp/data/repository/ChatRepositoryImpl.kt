@@ -1,10 +1,10 @@
 package com.demo.smartchatbotapp.data.repository
 
+import com.demo.smartchatbotapp.common.toDomain
 import com.demo.smartchatbotapp.data.local.dao.ChatMessageDao
 import com.demo.smartchatbotapp.data.local.entity.ChatMessageEntity
 import com.demo.smartchatbotapp.data.remote.ChatApiService
 import com.demo.smartchatbotapp.data.remote.model.ChatRequest
-import com.demo.smartchatbotapp.data.remote.model.ChatResponse
 import com.demo.smartchatbotapp.data.remote.model.Message
 import com.demo.smartchatbotapp.domain.model.ChatMessage
 import com.demo.smartchatbotapp.domain.repository.ChatRepository

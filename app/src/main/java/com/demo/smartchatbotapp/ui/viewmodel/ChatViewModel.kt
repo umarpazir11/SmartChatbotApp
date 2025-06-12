@@ -14,6 +14,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing chat-related UI state and operations.
+ * This ViewModel handles the business logic for the chat screen,
+ * including loading chat history and sending messages.
+ *
+ * @property getChatHistoryUseCase Use case for retrieving chat history
+ * @property sendMessageUseCase Use case for sending messages
+ */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatHistoryUseCase: GetChatHistoryUseCase,
@@ -27,6 +35,10 @@ class ChatViewModel @Inject constructor(
         loadChatHistory()
     }
 
+    /**
+     * Loads the chat history using the [GetChatHistoryUseCase].
+     * Updates the [chatState] with the results.
+     */
     private fun loadChatHistory() {
         getChatHistoryUseCase()
             .onEach { messages ->
@@ -38,6 +50,12 @@ class ChatViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Sends a message using the [SendMessageUseCase].
+     * Updates the [chatState] based on the result.
+     *
+     * @param content The message content to send
+     */
     fun sendMessage(content: String) {
         viewModelScope.launch {
             _chatState.value = ChatState.Loading
@@ -52,8 +70,26 @@ class ChatViewModel @Inject constructor(
     }
 }
 
+/**
+ * Represents the possible states of the chat UI.
+ */
 sealed class ChatState {
+    /**
+     * Indicates that a loading operation is in progress.
+     */
     data object Loading : ChatState()
+
+    /**
+     * Indicates that the operation was successful.
+     *
+     * @property messages The list of chat messages
+     */
     data class Success(val messages: List<ChatMessage>) : ChatState()
+
+    /**
+     * Indicates that an error occurred.
+     *
+     * @property message The error message
+     */
     data class Error(val message: String) : ChatState()
 } 
