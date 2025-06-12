@@ -8,7 +8,9 @@ import com.demo.smartchatbotapp.domain.usecase.SendMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,38 +21,33 @@ class ChatViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _chatState = MutableStateFlow<ChatState>(ChatState.Loading)
-    val chatState: StateFlow<ChatState> = _chatState.asStateFlow()
+    val chatState: StateFlow<ChatState> = _chatState
 
     init {
         loadChatHistory()
     }
 
     private fun loadChatHistory() {
-        viewModelScope.launch {
-            try {
-                val messages = getChatHistoryUseCase()
+        getChatHistoryUseCase()
+            .onEach { messages ->
                 _chatState.value = ChatState.Success(messages)
-            } catch (e: Exception) {
-                _chatState.value = ChatState.Error(e.message ?: "Failed to load chat history")
             }
-        }
+            .catch { error ->
+                _chatState.value = ChatState.Error(error.message ?: "Unknown error occurred")
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun sendMessage(message: String) {
+    fun sendMessage(content: String) {
         viewModelScope.launch {
-            try {
-                sendMessageUseCase(message).fold(
-                    onSuccess = { newMessage ->
-                        val currentMessages = (_chatState.value as? ChatState.Success)?.messages ?: emptyList()
-                        _chatState.value = ChatState.Success(currentMessages + newMessage)
-                    },
-                    onFailure = { error ->
-                        _chatState.value = ChatState.Error(error.message ?: "Failed to send message")
-                    }
-                )
-            } catch (e: Exception) {
-                _chatState.value = ChatState.Error(e.message ?: "Failed to send message")
-            }
+            _chatState.value = ChatState.Loading
+            sendMessageUseCase(content)
+                .onSuccess { message ->
+                    // The chat history will be updated automatically through Flow
+                }
+                .onFailure { error ->
+                    _chatState.value = ChatState.Error(error.message ?: "Failed to send message")
+                }
         }
     }
 }

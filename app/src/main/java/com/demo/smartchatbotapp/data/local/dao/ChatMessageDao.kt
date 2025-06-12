@@ -2,15 +2,17 @@ package com.demo.smartchatbotapp.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.demo.smartchatbotapp.data.local.entity.ChatMessageEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatMessageDao {
     @Query("SELECT * FROM chat_messages ORDER BY timestamp ASC")
-    suspend fun getAllMessages(): List<ChatMessageEntity>
+    fun getAllMessages(): Flow<List<ChatMessageEntity>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(message: ChatMessageEntity): Long
 
     @Query("DELETE FROM chat_messages")
