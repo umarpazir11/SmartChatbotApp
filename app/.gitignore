@@ -1,1 +1,68 @@
 /build
+
+.idea/
+*.iml
+*.iws
+*.ipr
+.gradle/
+build/
+local.properties
+
+# Android Studio specific
+captures/
+.DS_Store
+*.apk
+*.aab
+*.ap_
+*.aar
+*.dex
+*.class
+
+# Keystore files (NEVER commit your production keystore or its passwords)
+*.jks
+*.keystore
+
+# Local configuration files that may contain sensitive information
+# (though local.properties is usually sufficient for SDK location)
+
+# Log files
+*.log
+
+# Temp files
+*.tmp
+
+# Generated files by specific tools (add as needed)
+# For example, if you have code generation output you don't want to track
+# directly in the repo because it's always regenerated.
+
+# Test results and reports (often generated in build/ directory anyway)
+/build/reports/
+/build/test-results/
+/build/outputs/androidTest-results/
+/build/outputs/mapping/
+
+# Emulator snapshot files (if you manage AVDs outside of the project, not usually needed here)
+# *.avd/snapshots.img
+
+# KSP generated files (if you prefer not to track them, though sometimes useful for debugging)
+# /build/generated/ksp/
+
+# Hilt generated files (same as KSP)
+# /build/generated/hilt/
+
+# Room schema location (you SHOULD track this if you provide room.schemaLocation)
+# If you specified "$projectDir/schemas" for Room schema location,
+# you would generally NOT add "schemas/" here, as you want to version control your schemas.
+# However, if it's inside build/, it's already covered.
+._*
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux specific
+*~
+# Entries for specific tools you might be using, e.g.,
+# fastlane/report.xml
+# .firebase/

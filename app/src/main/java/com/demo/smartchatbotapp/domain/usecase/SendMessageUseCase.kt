@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SendMessageUseCase @Inject constructor(
     private val repository: ChatRepository
 ) {
-    suspend operator fun invoke(message: String): ChatMessage {
+    suspend operator fun invoke(message: String): Result<ChatMessage> {
         return repository.sendMessage(message)
     }
 } 

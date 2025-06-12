@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0d675457f63b830bdfe2a5ad0deb5421",
+    "identityHash": "12b7124d7a69d7ce2e3fca05098adea1",
     "entities": [
       {
         "tableName": "chat_messages",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `content` TEXT NOT NULL, `isFromUser` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `content` TEXT NOT NULL, `isUser` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -21,8 +21,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "isFromUser",
-            "columnName": "isFromUser",
+            "fieldPath": "isUser",
+            "columnName": "isUser",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -34,16 +34,19 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d675457f63b830bdfe2a5ad0deb5421')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '12b7124d7a69d7ce2e3fca05098adea1')"
     ]
   }
 }

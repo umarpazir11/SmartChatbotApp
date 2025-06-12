@@ -10,13 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.smartchatbotapp.domain.model.ChatMessage
+import com.demo.smartchatbotapp.ui.viewmodel.ChatState
 import com.demo.smartchatbotapp.ui.viewmodel.ChatViewModel
 
 @Composable
 fun ChatScreen(
     viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val messages by viewModel.messages.collectAsState()
+    val chatState by viewModel.chatState.collectAsState()
     var messageText by remember { mutableStateOf("") }
 
     Column(
@@ -24,14 +25,34 @@ fun ChatScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(messages) { message ->
-                ChatMessageItem(message)
+        when (val state = chatState) {
+            is ChatState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is ChatState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = state.message)
+                }
+            }
+            is ChatState.Success -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.messages) { message ->
+                        ChatMessageItem(message)
+                    }
+                }
             }
         }
 
@@ -68,7 +89,7 @@ fun ChatScreen(
 fun ChatMessageItem(message: ChatMessage) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start
+        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
     ) {
         Card(
             modifier = Modifier.widthIn(max = 300.dp)

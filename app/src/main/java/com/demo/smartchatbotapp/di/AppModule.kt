@@ -3,8 +3,7 @@ package com.demo.smartchatbotapp.di
 import android.app.Application
 import androidx.room.Room
 import com.demo.smartchatbotapp.data.local.ChatDatabase
-import com.demo.smartchatbotapp.data.repository.ChatRepositoryImpl
-import com.demo.smartchatbotapp.domain.repository.ChatRepository
+import com.demo.smartchatbotapp.data.local.dao.ChatMessageDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +26,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChatRepository(db: ChatDatabase): ChatRepository {
-        return ChatRepositoryImpl(db.chatMessageDao)
+    fun provideChatMessageDao(db: ChatDatabase): ChatMessageDao {
+        return db.chatMessageDao
     }
 } 

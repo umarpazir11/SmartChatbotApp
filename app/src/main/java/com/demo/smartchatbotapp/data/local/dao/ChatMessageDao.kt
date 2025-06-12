@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ChatMessageDao {
     @Query("SELECT * FROM chat_messages ORDER BY timestamp ASC")
-    fun getChatMessages(): Flow<List<ChatMessageEntity>>
+    fun getAllMessages(): Flow<List<ChatMessageEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: ChatMessageEntity)
+    suspend fun insertMessage(message: ChatMessageEntity): Long
 
     @Query("DELETE FROM chat_messages")
     suspend fun clearChatHistory()
