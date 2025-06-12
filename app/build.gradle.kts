@@ -17,6 +17,7 @@ android {
         versionName = "1.0"
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
+            arg("moshi.generated", "javax.annotation.Generated")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

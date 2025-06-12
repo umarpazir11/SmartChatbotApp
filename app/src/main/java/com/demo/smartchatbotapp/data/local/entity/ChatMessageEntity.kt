@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "chat_messages")
 data class ChatMessageEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val content: String,
-    val isFromUser: Boolean,
-    val timestamp: Long
+    val isUser: Boolean,
+    val timestamp: Long = System.currentTimeMillis()
 ) 

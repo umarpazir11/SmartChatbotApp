@@ -2,48 +2,61 @@ package com.demo.smartchatbotapp.data.repository
 
 import com.demo.smartchatbotapp.data.local.dao.ChatMessageDao
 import com.demo.smartchatbotapp.data.local.entity.ChatMessageEntity
+import com.demo.smartchatbotapp.data.remote.ChatApiService
+import com.demo.smartchatbotapp.data.remote.ChatRequest
+import com.demo.smartchatbotapp.data.remote.Message
 import com.demo.smartchatbotapp.domain.model.ChatMessage
 import com.demo.smartchatbotapp.domain.repository.ChatRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import java.util.UUID
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
-    private val chatMessageDao: ChatMessageDao
+    private val dao: ChatMessageDao,
+    private val api: ChatApiService
 ) : ChatRepository {
 
-    override fun getChatHistory(): Flow<List<ChatMessage>> {
-        return chatMessageDao.getChatMessages().map { entities ->
-            entities.map { it.toChatMessage() }
+    override suspend fun getChatHistory(): List<ChatMessage> {
+        return dao.getAllMessages().map { it.toDomain() }
+    }
+
+    override suspend fun sendMessage(message: String): Result<ChatMessage> {
+        return try {
+            // Save user message
+            val userMessage = ChatMessageEntity(
+                content = message,
+                isUser = true
+            )
+            dao.insertMessage(userMessage)
+
+            // Send to API
+            val response = api.sendMessage(
+                ChatRequest(
+                    messages = listOf(
+                        Message(role = "user", content = message)
+                    )
+                )
+            )
+
+            // Save bot response
+            val botMessage = ChatMessageEntity(
+                content = response.choices.firstOrNull()?.message?.content ?: "No response",
+                isUser = false
+            )
+            dao.insertMessage(botMessage)
+
+            Result.success(botMessage.toDomain())
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
-    override suspend fun sendMessage(message: String): ChatMessage {
-        val chatMessage = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            content = message,
-            isFromUser = true
-        )
-        chatMessageDao.insertMessage(chatMessage.toEntity())
-        return chatMessage
-    }
-
     override suspend fun clearChatHistory() {
-        chatMessageDao.clearChatHistory()
+        dao.clearChatHistory()
     }
 
-    private fun ChatMessageEntity.toChatMessage() = ChatMessage(
+    private fun ChatMessageEntity.toDomain() = ChatMessage(
         id = id,
         content = content,
-        isFromUser = isFromUser,
-        timestamp = timestamp
-    )
-
-    private fun ChatMessage.toEntity() = ChatMessageEntity(
-        id = id,
-        content = content,
-        isFromUser = isFromUser,
+        isUser = isUser,
         timestamp = timestamp
     )
 } 

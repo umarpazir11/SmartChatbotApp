@@ -1,8 +1,13 @@
 package com.demo.smartchatbotapp.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "chat_messages")
 data class ChatMessage(
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val content: String,
-    val isFromUser: Boolean,
+    val isUser: Boolean,
     val timestamp: Long = System.currentTimeMillis()
 ) 
