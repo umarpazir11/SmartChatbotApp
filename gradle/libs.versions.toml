@@ -16,6 +16,8 @@ coroutines = "1.7.3"
 hiltNavigation = "1.1.0"
 navigation = "2.7.7"
 compose-compiler = "1.5.8"
+okhttp = "4.12.0"
+javax-annotation = "1.3.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +49,10 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
 
+# OkHttp
+okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
 # Moshi
 moshi-core = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
@@ -58,6 +64,9 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # Navigation
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+
+# Annotations
+javax-annotation = { group = "javax.annotation", name = "javax.annotation-api", version.ref = "javax-annotation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

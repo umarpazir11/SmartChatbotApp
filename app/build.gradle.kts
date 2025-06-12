@@ -75,10 +75,17 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.moshi)
     
+    // OkHttp
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
+    
     // Moshi
     implementation(libs.moshi.core)
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.codegen)
+    
+    // Annotations
+    implementation(libs.javax.annotation)
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
