@@ -44,7 +44,7 @@ class ChatViewModel @Inject constructor(
      * Loads the chat history using the [GetChatHistoryUseCase].
      * Updates the [chatState] with the results.
      */
-    private fun loadChatHistory() {
+    fun loadChatHistory() {
         combine(
             getChatHistoryUseCase(),
             networkMonitor.isOnline()
