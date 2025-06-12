@@ -19,7 +19,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val BASE_URL = "https://api.deepseek.com/v1/"
-    private const val API_KEY = "sk-e30e34db0b3141a8af869455e59c465b"
+    private const val API_KEY = "YOUR_API_KEY"
 
     @Provides
     @Singleton
