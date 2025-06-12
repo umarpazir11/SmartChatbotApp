@@ -54,9 +54,6 @@ captures/
 # If you specified "$projectDir/schemas" for Room schema location,
 # you would generally NOT add "schemas/" here, as you want to version control your schemas.
 # However, if it's inside build/, it's already covered.
-
-# macOS specific
-.DS_Store
 ._*
 
 # Windows specific
