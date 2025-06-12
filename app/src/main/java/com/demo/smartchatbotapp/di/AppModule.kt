@@ -1,0 +1,33 @@
+package com.demo.smartchatbotapp.di
+
+import android.app.Application
+import androidx.room.Room
+import com.demo.smartchatbotapp.data.local.ChatDatabase
+import com.demo.smartchatbotapp.data.repository.ChatRepositoryImpl
+import com.demo.smartchatbotapp.domain.repository.ChatRepository
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideChatDatabase(app: Application): ChatDatabase {
+        return Room.databaseBuilder(
+            app,
+            ChatDatabase::class.java,
+            "chat_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(db: ChatDatabase): ChatRepository {
+        return ChatRepositoryImpl(db.chatMessageDao)
+    }
+} 
